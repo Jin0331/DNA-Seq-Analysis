@@ -19,14 +19,14 @@ do
  mapFile=${workPath}/${filename}_bwa.bam
  mapped[${#mapped[*]}]=$mapFile
  bwa mem -t 15 -Ma -R @RG\\tID:${filename}\\tSM:${filename}\\tPL:ILM\\tLB:${filename} $ref $i ${i%1.fq.gz}2.fq.gz \
- |samtools sort - -@ 15 -n -m 10G -T ${i%R1.fastq.gz} -o $mapFile
+ |samtools sort - -@ 6 -n -m 7G -T ${i%R1.fastq.gz} -o $mapFile
 done
 
 # MarkDuplicates using SAMtools
 for mapFile in ${mapped[*]}
 do
  samtools fixmate -m -@ 10 ${mapFile} fixmate.bam
- samtools sort -@ 40 -m 10G -o sorted.bam fixmate.bam
+ samtools sort -@ 6 -m 7G -o sorted.bam fixmate.bam
  samtools markdup -s -@ 10 sorted.bam ${mapFile%.bam}_dedup.bam
  samtools index -@ 10 ${mapFile%.bam}_dedup.bam
 done
