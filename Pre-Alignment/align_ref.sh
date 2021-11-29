@@ -25,8 +25,8 @@ done
 # MarkDuplicates using SAMtools
 for mapFile in ${mapped[*]}
 do
- samtools fixmate -m -@ 10 ${mapFile} fixmate.bam
+ samtools fixmate -m -@ 20 ${mapFile} fixmate.bam
  samtools sort -@ 6 -m 7G -o sorted.bam fixmate.bam
- samtools markdup -s -@ 10 sorted.bam ${mapFile%.bam}_dedup.bam
- samtools index -@ 10 ${mapFile%.bam}_dedup.bam
+ samtools markdup -s -@ 20 sorted.bam ${mapFile%.bam}_dedup.bam
+ samtools index -@ 20 ${mapFile%.bam}_dedup.bam
 done
