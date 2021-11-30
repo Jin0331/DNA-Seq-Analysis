@@ -1,7 +1,7 @@
 #!/bin/bash
 #docker run --rm -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 bash
 
-while getopts b:w:r:d:i: flag
+while getopts b:w:r:d:i:o: flag
 do
     case "${flag}" in
         b) bamFolder=${OPTARG};;
@@ -9,6 +9,7 @@ do
         r) ref=${OPTARG};;
         d) dbsnp=${OPTARG};;
         i) interval=${OPTARG};;
+        o) finalPath=${OPTARG};;
     esac
 done
 
@@ -68,7 +69,7 @@ do
                  --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
 
     gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
-                       -O ${workPath}/${filename}_final.bai \
+                       -O ${finalPath}/${filename}_final.bai \
                        -VALIDATION_STRINGENCY LENIENT
 
 done
