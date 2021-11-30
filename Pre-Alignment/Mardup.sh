@@ -65,10 +65,10 @@ do
                         -R ${ref}
 
     gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
-                 -O ${workPath}/${filename}_final.bam \
+                 -O ${finalPath}/${filename}_final.bam \
                  --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
 
-    gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
+    gatk BuildBamIndex -I ${finalPath}/${filename}_final.bam \
                        -O ${finalPath}/${filename}_final.bai \
                        -VALIDATION_STRINGENCY LENIENT
 
