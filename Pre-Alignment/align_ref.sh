@@ -16,16 +16,16 @@ for i in ${fastqFolder}/*_1.fq.gz
 do
     filename=$(basename $i _1.fq.gz)
     mapFile=${workPath}/${filename}_bwa.bam
-    mapped[${#mapped[*]}]=$mapFile
+    mapped[${#mapped[*]}]=${mapFile}
     bwa mem -t 15 -Ma -R "@RG\\tID:${filename}\\tSM:${filename}\\tPL:ILM\\tLB:${filename}" ${ref} ${i} ${i%1.fq.gz}2.fq.gz \
-    |samtools sort - -@ 6 -n -m 7G -T ${i%R1.fq.gz} -o ${mapFile}
+    | samtools sort - -@ 6 -n -m 7G -T ${i%R1.fq.gz} -o ${mapFile}
 done
 
 # # MarkDuplicates using SAMtools
 for mapFile in ${mapped[*]}
 do
-    samtools fixmate -m -@ 20 ${mapFile} fixmate.bam
-    samtools sort -@ 6 -m 7G -o sorted.bam fixmate.bam
-    samtools markdup -s -@ 20 sorted.bam ${mapFile%.bam}_dedup.bam
-    samtools index -@ 20 ${mapFile%.bam}_dedup.bam
+    samtools fixmate -m -@ 25 ${mapFile} ${workPath}/fixmate.bam
+    samtools sort -@ 6 -m 7G -o ${workPath}/sorted.bam ${workPath}/fixmate.bam
+    samtools markdup -s -@ 25 ${workPath}/sorted.bam ${workPath}/${mapFile%.bam}_dedup.bam
+    samtools index -@ 25 ${workPath}/${mapFile%.bam}_dedup.bam
 done
