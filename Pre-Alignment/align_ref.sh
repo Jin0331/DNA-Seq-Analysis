@@ -26,6 +26,6 @@ for mapFile in ${mapped[*]}
 do
     samtools fixmate -m -@ 25 ${mapFile} ${workPath}/fixmate.bam
     samtools sort -@ 6 -m 7G -o ${workPath}/sorted.bam ${workPath}/fixmate.bam
-    samtools markdup -s -@ 25 ${workPath}/sorted.bam ${workPath}/${mapFile%.bam}_dedup.bam
-    samtools index -@ 25 ${workPath}/${mapFile%.bam}_dedup.bam
+    samtools markdup -s -@ 25 ${workPath}/sorted.bam ${mapFile%.bam}_dedup.bam
+    samtools index -@ 25 ${mapFile%.bam}_dedup.bam
 done
