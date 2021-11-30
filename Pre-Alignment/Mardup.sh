@@ -15,20 +15,20 @@ done
 # Using GATK
 for mapFile in ${bamFolder}/*_bwa_dedup.bam
 do  
-    # # BaseRecalibrator
-    # for i in `seq -f %04g 0 14`
-    # do  
-    #     filename=$(basename $mapFile _dedup.bam)
-    #     outfile=${filename}_dedup_recal_data_${i}.table
-    #     gatk --java-options "-Xmx4G -XX:+UseParallelGC \
-    #                         -XX:ParallelGCThreads=4" BaseRecalibrator \
-    #                         -L ${interval}/${i}-scattered.interval_list \
-    #                         -R $ref \
-    #                         -I ${mapFile} \
-    #                         --known-sites $dbsnp \
-    #                         -O ${workPath}/${outfile} &
-    # done
-    # wait
+    # BaseRecalibrator
+    for i in `seq -f %04g 0 14`
+    do  
+        filename=$(basename $mapFile _dedup.bam)
+        outfile=${filename}_dedup_recal_data_${i}.table
+        gatk --java-options "-Xmx4G -XX:+UseParallelGC \
+                            -XX:ParallelGCThreads=4" BaseRecalibrator \
+                            -L ${interval}/${i}-scattered.interval_list \
+                            -R $ref \
+                            -I ${mapFile} \
+                            --known-sites $dbsnp \
+                            -O ${workPath}/${outfile} &
+    done
+    wait
 
     # ApplyBQSR
     for i in `seq -f %04g 0 14`
@@ -45,15 +45,15 @@ do
             echo ${workPath}/${output} >> ${workPath}/${filename}_file.list
         fi
 
-        # gatk --java-options "-Xmx4G -Xmx4G -XX:+UseParallelGC \
-        #      -XX:ParallelGCThreads=4" ApplyBQSR -R $ref \
-        #                     -I ${mapFile} \
-        #                     -L ${interval}/${i}-scattered.interval_list \
-        #                     -bqsr $bqfile \
-        #                     --static-quantized-quals 10 \
-        #                     --static-quantized-quals 20 \
-        #                     --static-quantized-quals 30  \
-        #                     -O ${workPath}/${output} &
+        gatk --java-options "-Xmx4G -Xmx4G -XX:+UseParallelGC \
+             -XX:ParallelGCThreads=4" ApplyBQSR -R $ref \
+                            -I ${mapFile} \
+                            -L ${interval}/${i}-scattered.interval_list \
+                            -bqsr $bqfile \
+                            --static-quantized-quals 10 \
+                            --static-quantized-quals 20 \
+                            --static-quantized-quals 30  \
+                            -O ${workPath}/${output} &
     done
     wait
 
