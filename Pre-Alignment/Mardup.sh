@@ -13,6 +13,9 @@ do
     esac
 done
 
+# word dir create
+mkdir -p ${workPath}
+
 # Using GATK
 for mapFile in ${bamFolder}/*_bwa_dedup.bam
 do  
@@ -59,6 +62,8 @@ do
     wait
 
     # GatherBamfile & Sortsam
+    mkdir -p ${finalPath}
+
     filename=$(basename $mapFile _dedup.bam)
     gatk GatherBamFiles -I ${workPath}/${filename}_file.list \
                         -O ${workPath}/${filename}_unsorted.bam \
@@ -73,3 +78,6 @@ do
                        -VALIDATION_STRINGENCY LENIENT
 
 done
+
+# remove work path
+rm -rf ${workPath}
