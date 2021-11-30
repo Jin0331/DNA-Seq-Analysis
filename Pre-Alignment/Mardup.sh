@@ -1,7 +1,7 @@
 #!/bin/bash
 #docker run --rm -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 bash
 
-while getopts b:w:r:d:i:o: flag
+while getopts b:w:r:d:i:o:t: flag
 do
     case "${flag}" in
         b) bamFolder=${OPTARG};;
@@ -10,6 +10,7 @@ do
         d) dbsnp=${OPTARG};;
         i) interval=${OPTARG};;
         o) finalPath=${OPTARG};;
+        t) type=${OPTARG};;
     esac
 done
 
@@ -61,23 +62,33 @@ do
     done
     wait
 
-    # GatherBamfile & Sortsam
-    mkdir -p ${finalPath}
+    # file list
+    if [ ${type} = "somatic" ]
+    then
+        # GatherBamfile & Sortsam
+        mkdir -p ${finalPath}
 
-    filename=$(basename $mapFile _dedup.bam)
-    gatk GatherBamFiles -I ${workPath}/${filename}_file.list \
-                        -O ${workPath}/${filename}_unsorted.bam \
-                        -R ${ref}
+        filename=$(basename $mapFile _dedup.bam)
+        gatk GatherBamFiles -I ${workPath}/${filename}_file.list \
+                            -O ${workPath}/${filename}_unsorted.bam \
+                            -R ${ref}
 
-    gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
-                 -O ${finalPath}/${filename}_final.bam \
-                 --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
+        gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
+                    -O ${finalPath}/${filename}_final.bam \
+                    --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
 
-    gatk BuildBamIndex -I ${finalPath}/${filename}_final.bam \
-                       -O ${finalPath}/${filename}_final.bai \
-                       -VALIDATION_STRINGENCY LENIENT
+        gatk BuildBamIndex -I ${finalPath}/${filename}_final.bam \
+                        -O ${finalPath}/${filename}_final.bai \
+                        -VALIDATION_STRINGENCY LENIENT
+    fi
+
+
 
 done
 
-# remove work path
-rm -rf ${workPath}
+if [ ${type} = "somatic" ]
+then
+    # remove work path
+    rm -rf ${workPath}
+fi
+
