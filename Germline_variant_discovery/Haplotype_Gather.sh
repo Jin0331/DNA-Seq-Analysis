@@ -15,6 +15,7 @@ done
 mkdir -p ${finalPath}
 mkdir -p ${scattergvcfFolder}
 
+# HaplotypeCaller
 for mapFile in ${scatterbamFolder}/*_bwa_dedup_recal_0001.bam
 do  
 
@@ -51,5 +52,4 @@ do
     gatk --java-options "-Xmx20G" GatherVcfs -R ${ref} \
             -I ${scattergvcfFolder}/${filename}_gvcf_file.list \
             -O ${finalPath}/${combine}
-
 done
