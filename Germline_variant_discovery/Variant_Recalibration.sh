@@ -9,6 +9,7 @@ do
         h) hapmap=${OPTARG};;
         o) omni=${OPTARG};;
         d) dbsnp=${OPTARG};;
+
         i) interval=${OPTARG};;
         o) finalPath=${OPTARG};;
         t) type=${OPTARG};;
@@ -22,19 +23,17 @@ gatk --java-options " -Xms4G -Xmx4G -XX:ParallelGCThreads=5" VariantRecalibrator
   -mode SNP \
   -R ${ref} \
   -V ${mergevcf} \
-  -O ${workvqsr}/merged_SNP1.recal \
-  -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR  \
-  --tranches-file output_SNP1.tranches \
+  -O ${workvqsr}/recalibrate_SNP.recal \
+  -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \
+  --maxgaussians 6 --tranches-file output_SNP1.tranches \
   -tranche 100.0 -tranche 99.95 -tranche 99.9 \
   -tranche 99.5 -tranche 99.0 -tranche 97.0 -tranche 96.0 \
-  -tranche 95.0 -tranche 94.0 \
-  -tranche 93.5 -tranche 93.0 -tranche 92.0 -tranche 91.0 -tranche 90.0 \
-
+  -tranche 95.0 -tranche 94.0 -tranche 93.5 -tranche 93.0 \
+  -tranche 92.0 -tranche 91.0 -tranche 90.0 \
   --resource:hapmap,known=false,training=true,truth=true,prior=15.0 ${hapmap} \
   --resource:omni,known=false,training=true,truth=false,prior=12.0 ${omni} \
-  --resource:1000G,known=false,training=true,truth=false,prior=10.0 \
-  /fdb/GATK_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.vcf.gz \
-
+  --resource:1000G,known=false,training=true,truth=false,prior=10.0 ${kg1000} \
+  --resource:dbsnp,known=true,training=false,truth=false,prior=7.0 ${dbsnp}] \
   --rscript-file output_SNP1.plots.R
 
 # Variant quality score recalibration - INDELs
