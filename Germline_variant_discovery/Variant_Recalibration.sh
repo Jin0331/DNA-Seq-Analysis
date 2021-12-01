@@ -66,9 +66,9 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
   # Apply recalibration to Indels
 gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
   -V ${workvqsr}/recalibrated_snps_raw_indels.vcf \
-  -O ${finalPath}/merged_snp_indel.recal.vcf 
+  -O ${finalPath}/merged_snp_indel.recal.vcf \
   --recal-file ${workvqsr}/recalibrate_INDEL.recal \
   --tranches-file ${workvqsr}/recalibrate_INDEL.tranches \
   -truth-sensitivity-filter-level 99.0 \
-  --create-output-variant-index true
+  --create-output-variant-index true \
   -mode INDEL
