@@ -59,7 +59,7 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
   -O ${workvqsr}/recalibrated_snps_raw_indels.vcf \
   --recal-file ${workvqsr}/recalibrate_SNP.recal \
   --tranches-file ${workvqsr}/recalibrate_SNP.tranches \
-  -truth-sensitivity-filter-level 99.5 \
+  -truth-sensitivity-filter-level 99.9 \
   --create-output-variant-index true \
   -mode SNP
 
@@ -69,6 +69,6 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
   -O ${finalPath}/merged_snp_indel.recal.vcf \
   --recal-file ${workvqsr}/recalibrate_INDEL.recal \
   --tranches-file ${workvqsr}/recalibrate_INDEL.tranches \
-  -truth-sensitivity-filter-level 99.0 \
+  -truth-sensitivity-filter-level 99.9 \
   --create-output-variant-index true \
   -mode INDEL
