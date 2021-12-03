@@ -1,5 +1,6 @@
 #!/bin/bash
 #docker run --rm -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 bash
+START=$(date +%s)
 
 while getopts w:b:r:d:i:o: flag
 do
@@ -13,8 +14,6 @@ do
 
     esac
 done
-
-
 
 # sample map make
 for i in ${gvcfPath}/*.g.vcf
@@ -46,20 +45,25 @@ do
     else
         echo ${finalPath}/scatter-vcf-${i}.vcf >> ${finalPath}/vcf_file.list
     fi
-
+    
+    #PATH confirm
     gatk --java-options "-Xmx5G -XX:+UseParallelGC -XX:ParallelGCThreads=5" GenotypeGVCFs \
             -R ${ref} \
-            -V gendb://work/genomicDB/${i} \
+            -V gendb://germline/genomicDB/${i} \
+            -D ${dbsnp} \
             -O ${finalPath}/scatter-vcf-${i}.vcf &
 done
 wait
 
 # GatherVCF
-gatk --java-options "-Xmx20G" GatherVcfs \
+gatk --java-options "-Xms15G -Xmx15G" GatherVcfs \
             -R ${ref} \
             -I ${finalPath}/vcf_file.list \
             -O ${finalPath}/raw_merged.vcf
 
-
+# Time stemp
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "GenomicDBImport & GenotyepGVCFs $DIFF seconds"
 
 

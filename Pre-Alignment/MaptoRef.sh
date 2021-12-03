@@ -1,5 +1,7 @@
 #!/bin/bash
 
+START=$(date +%s)
+
 # docker run -dit -v ${PWD}:/data --name samtool staphb/samtools:1.11 bash
 # apt update && apt install bwa
 
@@ -31,3 +33,8 @@ do
     samtools markdup -s -@ 25 ${workPath}/sorted.bam ${workPath}/${mapFile%.bam}_dedup.bam
     samtools index -@ 25 ${workPath}/${mapFile%.bam}_dedup.bam
 done
+
+# Time stemp
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "Map to Reference && MarkDuplicates Done $DIFF seconds"

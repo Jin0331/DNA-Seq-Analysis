@@ -1,5 +1,7 @@
 #!/bin/bash
 
+START=$(date +%s)
+
 while getopts v:r:b:h:n:k:d:m:o: flag
 do
     case "${flag}" in
@@ -56,7 +58,7 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" VariantRecalibrator 
   # Apply recalibration to SNPs
 gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
   -V ${mergevcf} \
-  -O ${workvqsr}/recalibrated_snps_raw_indels.vcf \
+  -O ${workvqsr}/recalibrated_snps_VQSR.vcf \
   --recal-file ${workvqsr}/recalibrate_SNP.recal \
   --tranches-file ${workvqsr}/recalibrate_SNP.tranches \
   -truth-sensitivity-filter-level 99.9 \
@@ -65,10 +67,21 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
 
   # Apply recalibration to Indels
 gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
-  -V ${workvqsr}/recalibrated_snps_raw_indels.vcf \
-  -O ${finalPath}/merged_snp_indel.recal.vcf \
+  -V ${workvqsr}/recalibrated_snps_VQSR.vcf \
+  -O ${finalPath}/recalibrated_VQSR.vcf \
   --recal-file ${workvqsr}/recalibrate_INDEL.recal \
   --tranches-file ${workvqsr}/recalibrate_INDEL.tranches \
   -truth-sensitivity-filter-level 99.9 \
   --create-output-variant-index true \
   -mode INDEL
+
+gatk --java-options "-Xmx25g" SelectVariants \
+  -R ${ref} \
+  -V ${finalPath}/recalibrated_VQSR.vcf \
+  -O ${finalPath}/recalibrated_VQSR.filtered.vcf \
+  --exclude-filtered
+
+  # Time stemp
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "VQSR $DIFF seconds"

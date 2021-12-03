@@ -1,11 +1,15 @@
 #!/bin/bash
 
-while getopts b:g:r:i:o: flag
+START=$(date +%s)
+
+
+while getopts b:g:r:d:i:o: flag
 do
     case "${flag}" in
         b) scatterbamFolder=${OPTARG};; # scatter bam
         g) scattergvcfFolder=${OPTARG};; # scatter gvcf
         r) ref=${OPTARG};;
+        d) dbsnp=${OPTARG};;
         i) interval=${OPTARG};;
         o) finalPath=${OPTARG};;
     esac
@@ -21,8 +25,7 @@ do
 
     for i in `seq -f %04g 0 14`
     do
-        filename=$(basename $mapFile _dedup_recal_0001.bam)
-        echo ${filename}  
+        filename=$(basename $mapFile _dedup_recal_0001.bam)        
         infile=${filename}_dedup_recal_${i}.bam
         outfile=${filename}_dedup_recal_${i}.g.vcf
         
@@ -38,6 +41,7 @@ do
         gatk --java-options "-Xmx5G -XX:+UseParallelGC -XX:ParallelGCThreads=5" HaplotypeCaller \
                         -ERC GVCF \
                         -R ${ref} \
+                        -D ${dbsnp} \
                         -I ${scatterbamFolder}/${infile} \
                         -L ${interval}/${i}-scattered.interval_list \
                         -O ${scattergvcfFolder}/${outfile} \
@@ -53,3 +57,8 @@ do
             -I ${scattergvcfFolder}/${filename}_gvcf_file.list \
             -O ${finalPath}/${combine}
 done
+
+# Time stemp
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "Variant calling using GATK HaplotypeCaller (HC) && GatherVCF $DIFF seconds"

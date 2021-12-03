@@ -1,6 +1,8 @@
 #!/bin/bash
 #docker run --rm -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 bash
 
+START=$(date +%s)
+
 while getopts b:w:r:d:i:o:t: flag
 do
     case "${flag}" in
@@ -25,7 +27,7 @@ do
     do  
         filename=$(basename ${mapFile} _dedup.bam)
         outfile=${filename}_dedup_recal_data_${i}.table
-        gatk --java-options "-Xmx4G -XX:+UseParallelGC \
+        gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
                             -XX:ParallelGCThreads=4" BaseRecalibrator \
                             -L ${interval}/${i}-scattered.interval_list \
                             -R ${ref} \
@@ -83,9 +85,7 @@ do
     fi
 done
 
-if [ ${type} = "somatic" ]
-then
-    # remove work path
-    rm -rf ${workPath}
-fi
-
+# Time stemp
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "Base quality score recalibration (BQSR) and Apply BQSR $DIFF seconds"
