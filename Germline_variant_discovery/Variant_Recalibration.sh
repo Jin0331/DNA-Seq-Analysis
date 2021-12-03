@@ -78,7 +78,7 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" ApplyVQSR \
 gatk --java-options "-Xmx25g" SelectVariants \
   -R ${ref} \
   -V ${finalPath}/recalibrated_VQSR.vcf \
-  -O ${finalPath}/recalibrated_VQSR.filtered.vcf \
+  -O ${finalPath}/recalibrated_VQSR.filtered.PASS.vcf \
   --exclude-filtered
 
   # Time stemp
