@@ -61,6 +61,11 @@ gatk --java-options "-Xms15G -Xmx15G" GatherVcfs \
             -I ${finalPath}/vcf_file.list \
             -O ${finalPath}/raw_merged.vcf
 
+# Sort
+gatk --java-options "-Xms25G -Xmx25G" SortVcf \
+            -I ${finalPath}/raw_merged.vcf \
+            -O ${finalPath}/raw_merged.sort.vcf
+
 # Time stemp
 END=$(date +%s)
 DIFF=$(( $END - $START ))
