@@ -13,8 +13,8 @@ do
 done
 
 # directory
-mkdir -p ${workhard}
 mkdir -p ${finalPath}
+mkdir -p ${workhard}
 
 # SPLIT SNP
 gatk --java-options '-Xmx25g' SelectVariants \
