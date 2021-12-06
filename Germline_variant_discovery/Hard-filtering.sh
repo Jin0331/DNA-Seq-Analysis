@@ -31,20 +31,26 @@ gatk --java-options '-Xmx25g' SelectVariants \
  -O ${workhard}/Exome_Norm_HC_calls.indels.vcf
 
 # FILTER SNP 
+# GATK hard filter recommend
+# https://gatk.broadinstitute.org/hc/en-us/articles/360035531112--How-to-Filter-variants-either-with-VQSR-or-by-hard-filtering
 gatk --java-options '-Xmx25g' VariantFiltration \
  -R ${ref} \
  -V ${workhard}/Exome_Norm_HC_calls.snps.vcf \
  --missing-values-evaluate-as-failing true \
  --filter-expression "QD < 2.0" \
- --filter-name "QD_lt_2" \
+ --filter-name "QD2" \
+ --filter-expression "QUAL < 30.0" \
+ --filter-name "QUAL30" \
+ --filter-expression "SOR > 3.0" \
+ --filter-name "SOR3" \
  --filter-expression "FS > 60.0" \
- --filter-name "FS_gt_60" \
+ --filter-name "FS60" \
  --filter-expression "MQ < 40.0" \
- --filter-name "MQ_lt_40" \
+ --filter-name "MQ40" \
  --filter-expression "MQRankSum < -12.5" \
- --filter-name "MQRS_lt_n12.5" \
+ --filter-name "MQRankSum-12.5" \
  --filter-expression "ReadPosRankSum < -8.0" \
- --filter-name "RPRS_lt_n8" \
+ --filter-name "ReadPosRankSum-8" \
  -O ${workhard}/HardFilter.snps.filtered.vcf
 
 gatk --java-options '-Xmx25g' VariantFiltration \
@@ -52,11 +58,13 @@ gatk --java-options '-Xmx25g' VariantFiltration \
  -V ${workhard}/Exome_Norm_HC_calls.indels.vcf \
  --missing-values-evaluate-as-failing true \
  --filter-expression "QD < 2.0" \
- --filter-name "QD_lt_2" \
+ --filter-name "QD2" \
+ --filter-expression "QUAL < 30.0" \
+ --filter-name "QUAL30" \
  --filter-expression "FS > 200.0" \
- --filter-name "FS_gt_200" \
+ --filter-name "FS200" \
  --filter-expression "ReadPosRankSum < -20.0" \
- --filter-name "RPRS_lt_n20" \
+ --filter-name "ReadPosRankSum-20" \
  -O ${workhard}/HardFilter.indels.filtered.vcf
 
  # MERGE
