@@ -22,47 +22,47 @@ mkdir -p ${workPath}
 # Using GATK
 for mapFile in ${bamFolder}/*_bwa_dedup.bam
 do  
-    # BaseRecalibrator
-    for i in `seq -f %04g 0 14`
-    do  
-        filename=$(basename ${mapFile} _dedup.bam)
-        outfile=${filename}_dedup_recal_data_${i}.table
-        gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
-                            -XX:ParallelGCThreads=4" BaseRecalibrator \
-                            -L ${interval}/${i}-scattered.interval_list \
-                            -R ${ref} \
-                            -I ${mapFile} \
-                            --known-sites ${dbsnp} \
-                            -O ${workPath}/${outfile} &
-    done
-    wait
+    # # BaseRecalibrator
+    # for i in `seq -f %04g 0 14`
+    # do  
+    #     filename=$(basename ${mapFile} _dedup.bam)
+    #     outfile=${filename}_dedup_recal_data_${i}.table
+    #     gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
+    #                         -XX:ParallelGCThreads=4" BaseRecalibrator \
+    #                         -L ${interval}/${i}-scattered.interval_list \
+    #                         -R ${ref} \
+    #                         -I ${mapFile} \
+    #                         --known-sites ${dbsnp} \
+    #                         -O ${workPath}/${outfile} &
+    # done
+    # wait
 
-    # ApplyBQSR
-    for i in `seq -f %04g 0 14`
-    do
-        filename=$(basename ${mapFile} _dedup.bam)       
-        bqfile=${workPath}/${filename}_dedup_recal_data_${i}.table
-        output=${filename}_dedup_recal_${i}.bam
+    # # ApplyBQSR
+    # for i in `seq -f %04g 0 14`
+    # do
+    #     filename=$(basename ${mapFile} _dedup.bam)       
+    #     bqfile=${workPath}/${filename}_dedup_recal_data_${i}.table
+    #     output=${filename}_dedup_recal_${i}.bam
 
-        # file list
-        if [ ${i} = 1 ]
-        then
-            echo ${workPath}/${output} > ${workPath}/${filename}_file.list
-        else
-            echo ${workPath}/${output} >> ${workPath}/${filename}_file.list
-        fi
+    #     # file list
+    #     if [ ${i} = 1 ]
+    #     then
+    #         echo ${workPath}/${output} > ${workPath}/${filename}_file.list
+    #     else
+    #         echo ${workPath}/${output} >> ${workPath}/${filename}_file.list
+    #     fi
 
-        gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
-             -XX:ParallelGCThreads=4" ApplyBQSR -R ${ref} \
-                            -I ${mapFile} \
-                            -L ${interval}/${i}-scattered.interval_list \
-                            -bqsr ${bqfile} \
-                            --static-quantized-quals 10 \
-                            --static-quantized-quals 20 \
-                            --static-quantized-quals 30  \
-                            -O ${workPath}/${output} &
-    done
-    wait
+    #     gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
+    #          -XX:ParallelGCThreads=4" ApplyBQSR -R ${ref} \
+    #                         -I ${mapFile} \
+    #                         -L ${interval}/${i}-scattered.interval_list \
+    #                         -bqsr ${bqfile} \
+    #                         --static-quantized-quals 10 \
+    #                         --static-quantized-quals 20 \
+    #                         --static-quantized-quals 30  \
+    #                         -O ${workPath}/${output} &
+    # done
+    # wait
 
     # file list
     if [ ${type} = "somatic" ]
@@ -76,14 +76,30 @@ do
                             -R ${ref}
 
         gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
-                    -O ${finalPath}/${filename}_final.bam \
+                    -O ${workPath}/${filename}_final.bam \
                     --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
-
-        gatk BuildBamIndex -I ${finalPath}/${filename}_final.bam \
-                        -O ${finalPath}/${filename}_final.bai \
+        
+        gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
+                        -O ${workPath}/${filename}_final.bai \
                         -VALIDATION_STRINGENCY LENIENT
+
+        # file list
+        if [ ${i} = 1 ]
+        then
+            echo ${finalPath}/${filename}_final.bam > ${finalPath}/merge_file.list
+        else
+            echo ${finalPath}/${filename}_final.bam >> ${finalPath}/merge_file.list
+        fi
     fi
 done
+
+# multiple bam merge
+gatk MergeSamFiles "-Xmx8G -Xmx25G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
+     -I ${finalPath}/merge_file.list \
+     -O ${finalPath}/merged_sample.bam \
+     -AS false --CREATE_INDEX true --MERGE_SEQUENCE_DICTIONARIES false \
+     -SO coordinate --USE_THREADING true --VALIDATION_STRINGENCY STRICT
+
 
 # Time stemp
 END=$(date +%s)
