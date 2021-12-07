@@ -76,27 +76,27 @@ do
                             -R ${ref}
 
         gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
-                    -O ${workPath}/${filename}_final.bam \
+                    -O ${finalPath}/${filename}_final.bam \
                     --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
         
-        gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
-                        -O ${workPath}/${filename}_final.bai \
+        gatk BuildBamIndex -I ${finalPath}/${filename}_final.bam \
+                        -O ${finalPath}/${filename}_final.bai \
                         -VALIDATION_STRINGENCY LENIENT
     fi
 done
 
 
-if [ ${type} = "somatic" ]
-then
-    bamlist=$(for f in ${workPath}/*_final.bam; do echo -n "-I $f " ;done)
+# if [ ${type} = "somatic" ]
+# then
+#     bamlist=$(for f in ${workPath}/*_final.bam; do echo -n "-I $f " ;done)
 
-    # multiple bam merge
-    gatk MergeSamFiles \
-        ${bamlist} \
-        -O ${finalPath}/merged_sample.bam \
-        -AS false --CREATE_INDEX true --MERGE_SEQUENCE_DICTIONARIES false \
-        -SO coordinate --USE_THREADING true --VALIDATION_STRINGENCY STRICT
-fi
+#     # multiple bam merge
+#     gatk MergeSamFiles "-Xmx25G -Xmx25G" \
+#         ${bamlist} \
+#         -O ${finalPath}/merged_sample.bam \
+#         -AS false --CREATE_INDEX true --MERGE_SEQUENCE_DICTIONARIES false \
+#         -SO coordinate --USE_THREADING true --VALIDATION_STRINGENCY STRICT
+# fi
 
 # Time stemp
 END=$(date +%s)
