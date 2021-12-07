@@ -69,4 +69,4 @@ done
 # Time stemp
 END=$(date +%s)
 DIFF=$(( $END - $START ))
-echo "Mutect2 $DIFF seconds"
+echo "Mutect2 Merge Sort $DIFF seconds"
