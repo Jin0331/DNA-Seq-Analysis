@@ -19,78 +19,77 @@ done
 # word dir create
 mkdir -p ${workPath}
 
-# # Using GATK
-# for mapFile in ${bamFolder}/*_bwa_dedup.bam
-# do  
-#     # BaseRecalibrator
-#     for i in `seq -f %04g 0 14`
-#     do  
-#         filename=$(basename ${mapFile} _dedup.bam)
-#         outfile=${filename}_dedup_recal_data_${i}.table
-#         gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
-#                             -XX:ParallelGCThreads=4" BaseRecalibrator \
-#                             -L ${interval}/${i}-scattered.interval_list \
-#                             -R ${ref} \
-#                             -I ${mapFile} \
-#                             --known-sites ${dbsnp} \
-#                             -O ${workPath}/${outfile} &
-#     done
-#     wait
+# Using GATK
+for mapFile in ${bamFolder}/*_bwa_dedup.bam
+do  
+    # BaseRecalibrator
+    for i in `seq -f %04g 0 14`
+    do  
+        filename=$(basename ${mapFile} _dedup.bam)
+        outfile=${filename}_dedup_recal_data_${i}.table
+        gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
+                            -XX:ParallelGCThreads=4" BaseRecalibrator \
+                            -L ${interval}/${i}-scattered.interval_list \
+                            -R ${ref} \
+                            -I ${mapFile} \
+                            --known-sites ${dbsnp} \
+                            -O ${workPath}/${outfile} &
+    done
+    wait
 
-#     # ApplyBQSR
-#     for i in `seq -f %04g 0 14`
-#     do
-#         filename=$(basename ${mapFile} _dedup.bam)       
-#         bqfile=${workPath}/${filename}_dedup_recal_data_${i}.table
-#         output=${filename}_dedup_recal_${i}.bam
+    # ApplyBQSR
+    for i in `seq -f %04g 0 14`
+    do
+        filename=$(basename ${mapFile} _dedup.bam)       
+        bqfile=${workPath}/${filename}_dedup_recal_data_${i}.table
+        output=${filename}_dedup_recal_${i}.bam
 
-#         # file list
-#         if [ ${i} = 1 ]
-#         then
-#             echo ${workPath}/${output} > ${workPath}/${filename}_file.list
-#         else
-#             echo ${workPath}/${output} >> ${workPath}/${filename}_file.list
-#         fi
+        # file list
+        if [ ${i} = 1 ]
+        then
+            echo ${workPath}/${output} > ${workPath}/${filename}_file.list
+        else
+            echo ${workPath}/${output} >> ${workPath}/${filename}_file.list
+        fi
 
-#         gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
-#              -XX:ParallelGCThreads=4" ApplyBQSR -R ${ref} \
-#                             -I ${mapFile} \
-#                             -L ${interval}/${i}-scattered.interval_list \
-#                             -bqsr ${bqfile} \
-#                             --static-quantized-quals 10 \
-#                             --static-quantized-quals 20 \
-#                             --static-quantized-quals 30  \
-#                             -O ${workPath}/${output} &
-#     done
-#     wait
+        gatk --java-options "-Xmx8G -Xmx8G -XX:+UseParallelGC \
+             -XX:ParallelGCThreads=4" ApplyBQSR -R ${ref} \
+                            -I ${mapFile} \
+                            -L ${interval}/${i}-scattered.interval_list \
+                            -bqsr ${bqfile} \
+                            --static-quantized-quals 10 \
+                            --static-quantized-quals 20 \
+                            --static-quantized-quals 30  \
+                            -O ${workPath}/${output} &
+    done
+    wait
 
-#     # file list
-#     if [ ${type} = "somatic" ]
-#     then
-#         # GatherBamfile & Sortsam
-#         mkdir -p ${finalPath}
+    # file list
+    if [ ${type} = "somatic" ]
+    then
+        # GatherBamfile & Sortsam
+        mkdir -p ${finalPath}
 
-#         filename=$(basename ${mapFile} _dedup.bam)
-#         gatk GatherBamFiles -I ${workPath}/${filename}_file.list \
-#                             -O ${workPath}/${filename}_unsorted.bam \
-#                             -R ${ref}
+        filename=$(basename ${mapFile} _dedup.bam)
+        gatk GatherBamFiles -I ${workPath}/${filename}_file.list \
+                            -O ${workPath}/${filename}_unsorted.bam \
+                            -R ${ref}
 
-#         gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
-#                     -O ${workPath}/${filename}_final.bam \
-#                     --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
+        gatk SortSam -I ${workPath}/${filename}_unsorted.bam \
+                    -O ${workPath}/${filename}_final.bam \
+                    --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
         
-#         gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
-#                         -O ${workPath}/${filename}_final.bai \
-#                         -VALIDATION_STRINGENCY LENIENT
-#     fi
-# done
+        gatk BuildBamIndex -I ${workPath}/${filename}_final.bam \
+                        -O ${workPath}/${filename}_final.bai \
+                        -VALIDATION_STRINGENCY LENIENT
+    fi
+done
 
 
 if [ ${type} = "somatic" ]
 then
+    bamlist=$(for f in ${workPath}/*_final.bam; do echo -n "-I $f " ;done)
 
-    bamlist=$(for f in ${workPath}/*_final.bam; do echo -n "-I $f " ; done)
-    
     # multiple bam merge
     gatk MergeSamFiles \
         ${bamlist} \
