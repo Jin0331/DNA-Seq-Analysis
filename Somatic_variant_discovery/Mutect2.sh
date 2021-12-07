@@ -27,9 +27,9 @@ do
     # file list
     if [ ${i} = 1 ]
     then
-        echo ${workvariant}/${outfile} > ${workvariant}/${filename}_m2_vcf_file.list
+        echo ${workvariant}/${output} > ${workvariant}/${filename}_m2_vcf_file.list
     else
-        echo ${workvariant}/${outfile} >> ${workvariant}/${filename}_m2_vcf_file.list
+        echo ${workvariant}/${output} >> ${workvariant}/${filename}_m2_vcf_file.list
     fi
 
     gatk --java-options "-Xmx5G -XX:+UseParallelGC -XX:ParallelGCThreads=5" Mutect2 \
@@ -43,10 +43,19 @@ do
         -O ${workvariant}/${filename}.mt2_${i}.vcf &
     done
     wait
+
+    # # merge scattered phenotype vcf files
+    filename=$(basename $mapFile _final.bam)
+    combine=${filename}_mt2_merged.vcf
+
+    gatk --java-options "-Xmx20G" GatherVcfs -R ${ref} \
+            -I ${workvariant}/${filename}_m2_vcf_file.list \
+            -O ${finalPath}/${combine}
+
 done
 
 
 # Time stemp
 END=$(date +%s)
 DIFF=$(( $END - $START ))
-echo "SomaticVariant Calling $DIFF seconds"
+echo "Mutect2 $DIFF seconds"
