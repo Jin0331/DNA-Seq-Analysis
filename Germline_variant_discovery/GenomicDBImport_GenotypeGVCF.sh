@@ -2,12 +2,13 @@
 #docker run --rm -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 bash
 START=$(date +%s)
 
-while getopts w:b:r:d:i:o: flag
+while getopts w:b:r:t:d:i:o: flag
 do
     case "${flag}" in
         w) gvcfPath=${OPTARG};;
         b) genomicPath=${OPTARG};;
         r) ref=${OPTARG};;
+        t) refDict=${OPTARG};;
         d) dbsnp=${OPTARG};;
         i) interval=${OPTARG};;
         o) finalPath=${OPTARG};;
@@ -63,6 +64,7 @@ gatk --java-options "-Xms15G -Xmx15G" GatherVcfs \
 
 # Sort
 gatk --java-options "-Xms25G -Xmx25G" SortVcf \
+            --SEQUENCE_DICTIONARY ${refDict} \
             -I ${finalPath}/raw_merged.vcf \
             -O ${finalPath}/raw_merged.sort.vcf
 

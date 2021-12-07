@@ -2,11 +2,12 @@
 
 START=$(date +%s)
 
-while getopts v:r:g:p:i:b:o: flag
+while getopts v:r:d:g:p:i:b:o: flag
 do
     case "${flag}" in
         v) bamFolder=${OPTARG};;
         r) ref=${OPTARG};;
+        d) refDict=${OPTARG};;
         g) gnomad=${OPTARG};;
         p) pon=${OPTARG};;
         i) interval=${OPTARG};;
@@ -15,14 +16,14 @@ do
     esac
 done
     
-## 5. Run MuTect2 using only tumor sample on chromosome level (25 commands with different intervals)    
+## Run MuTect2 using only tumor sample on chromosome level (25 commands with different intervals)    
 for mapFile in ${bamFolder}/*_final.bam
 do
     for i in `seq -f %04g 0 14`
     do  
 
-    filename=$(basename $mapFile _final.bam)
-    output=${filename}_mt2_${i}.vcf
+    filename=$(basename $mapFile _bwa_final.bam)
+    output=${filename}.mt2_${i}.vcf
 
     # file list
     if [ ${i} = 1 ]
@@ -40,17 +41,27 @@ do
         --af-of-alleles-not-in-resource 2.5e-06 \
         --germline-resource ${gnomad} \
         -pon ${pon} \
-        -O ${workvariant}/${filename}.mt2_${i}.vcf &
+        -O ${workvariant}/${output} &
     done
     wait
 
-    # # merge scattered phenotype vcf files
-    filename=$(basename $mapFile _final.bam)
-    combine=${filename}_mt2_merged.vcf
+    # merge scattered phenotype vcf files & filter
+    filename=$(basename $mapFile _bwa_final.bam)
+    combine=${filename}.mt2_merged.vcf
+    sort=${filename}.mt2_merged_sort.vcf
 
-    gatk --java-options "-Xmx20G" GatherVcfs -R ${ref} \
+    # Merge
+    gatk --java-options "-Xmx20G" GatherVcfs \
+            -R ${ref} \
             -I ${workvariant}/${filename}_m2_vcf_file.list \
-            -O ${finalPath}/${combine}
+            -O ${workvariant}/${combine}
+
+    # Sort
+    gatk --java-options "-Xmx20G" SortVcf \
+            --SEQUENCE_DICTIONARY ${refDict} \
+            --CREATE_INDEX true \
+            -I ${workvariant}/${combine} \
+            -O ${workvariant}/${sort}
 
 done
 
