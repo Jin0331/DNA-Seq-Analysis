@@ -42,11 +42,6 @@ do
         -L ${interval}/${i}-scattered.interval_list \
         -R ${ref} \
         -O ${workvariant}/${outfile} &
-
-        ## 3. Calculate contamination on tumor sample
-        gatk CalculateContamination \
-        -I ${workvariant}/${outfile} \
-        -O ${workvariant}/${outfile2}
     done
     wait
 
