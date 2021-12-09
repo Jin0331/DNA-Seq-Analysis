@@ -15,7 +15,6 @@ do
 done
 
 # directory
-mkdir -p ${finalPath}
 mkdir -p ${workvariant}
 
 # Tumor-only somatic variant call pipeline
