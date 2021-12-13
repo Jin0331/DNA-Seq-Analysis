@@ -44,8 +44,8 @@ do
     wait
 
     # 3. Merge pileup summaries merge
-    head -2 ${workvariant}${filename}_targeted_sequencing_0000.table > ${workvariant}${filename}_targeted_sequencing.table
-    tail -n +3 -q ${workvariant}${filename}_targeted_sequencing_00* >> ${workvariant}${filename}_targeted_sequencing.table
+    head -2 ${workvariant}/${filename}_targeted_sequencing_0000.table > ${workvariant}/${filename}_targeted_sequencing.table
+    tail -n +3 -q ${workvariant}/${filename}_targeted_sequencing_00* >> ${workvariant}/${filename}_targeted_sequencing.table
 
     ## 4. Calculate contamination on tumor sample
     infile=${filename}_targeted_sequencing.table
