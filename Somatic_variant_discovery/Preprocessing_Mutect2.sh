@@ -28,7 +28,7 @@ do
         -O ${workvariant}/${filename} --FILE_EXTENSION .txt \
         -R ${ref}
 
-    ## 2. Generate pileup summaries on tumor sample
+    # 2. Generate pileup summaries on tumor sample
     # interval
     for i in `seq -f %04g 0 14`
     do  
@@ -43,20 +43,19 @@ do
     done
     wait
 
-    ## 3. Calculate contamination on tumor sample
-    # interval
-    for i in `seq -f %04g 0 14`
-    do  
-        infile=${filename}_targeted_sequencing_${i}.table
-        outfile=${filename}_targeted_sequencing.contamination_${i}.table
+    # 3. Merge pileup summaries merge
+    head -2 ${workvariant}${filename}_targeted_sequencing_0000.table > ${workvariant}${filename}_targeted_sequencing.table
+    tail -n +3 -q ${workvariant}${filename}_targeted_sequencing_00* >> ${workvariant}${filename}_targeted_sequencing.table
 
-        gatk CalculateContamination \
+    ## 4. Calculate contamination on tumor sample
+    infile=${filename}_targeted_sequencing.table
+    outfile=${filename}_targeted_sequencing.contamination.table
+
+    gatk CalculateContamination \
         -I ${workvariant}/${infile} \
-        -O ${workvariant}/${outfile} &
-    done
-    wait
+        -O ${workvariant}/${outfile}
 
-    ## 4. Find tumor sample name from BAM
+    ## 5. Find tumor sample name from BAM
     gatk GetSampleName \
         -I ${mapFile} \
         -O ${workvariant}/${filename}.targeted_sequencing.sample_name
