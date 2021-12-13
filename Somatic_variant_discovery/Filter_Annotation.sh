@@ -49,7 +49,7 @@ do
     gatk --java-options "-Xmx30G" Funcotator \
         -R ${ref} \
         -V ${finalPath}/${sort} \
-        --ref-version hg38 
+        --ref-version hg38 \
         --remove-filtered-variants \
         --data-sources-path ${funco} \
         --output-file-format VCF \
@@ -59,11 +59,13 @@ do
     gatk --java-options "-Xmx30G" Funcotator \
         -R ${ref} \
         -V ${finalPath}/${sort} \
-        --ref-version hg38 
+        --ref-version hg38 \
         --remove-filtered-variants \
         --data-sources-path ${funco} \
         --output-file-format MAF \
-        -O ${finalPath}/${funcoOutput2}
+        -O ${finalPath}/${funcoOutput2} \
+        --annotation-default Center:WMBIO.co \
+        --annotation-default Tumor_Sample_Barcode:${filename}
     
 done
 
