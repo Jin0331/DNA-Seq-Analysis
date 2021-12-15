@@ -26,8 +26,9 @@ do
     filename=$(basename $mapFile .mt2_merged_sort.vcf)
     output=${filename}.mt2_contFiltered.vcf
     sort=${filename}.mt2_filtered_sort.vcf
-    funcoOutput1=${filename}.mt2_filtered_sort.anno.vcf
-    funcoOutput2=${filename}.mt2_filtered_sort.anno.maf
+    filterPass=${filename}.mt2_filtered_sort_pass.vcf
+    funcoOutput1=${filename}.mt2_filtered.anno.vcf
+    funcoOutput2=${filename}.mt2_filtered.anno.maf
 
     # Filter Mutect Calls
     gatk --java-options "-Xmx30G" FilterMutectCalls \
@@ -44,11 +45,18 @@ do
         --SEQUENCE_DICTIONARY ${refDict} \
         --CREATE_INDEX true \
         -O ${finalPath}/${sort}
+    
+    # FILTER == PASS only
+    gatk --java-options "-Xmx25g" SelectVariants \
+        -R ${ref} \
+        -V ${finalPath}/${sort} \
+        -O ${finalPath}/${filterPass} \
+        --exclude-filtered
 
     # Funcotator for VCF
     gatk --java-options "-Xmx30G" Funcotator \
         -R ${ref} \
-        -V ${finalPath}/${sort} \
+        -V ${finalPath}/${filterPass} \
         --ref-version hg38 \
         --remove-filtered-variants \
         --data-sources-path ${funco} \
@@ -58,7 +66,7 @@ do
     # Funcotator for MAF
     gatk --java-options "-Xmx30G" Funcotator \
         -R ${ref} \
-        -V ${finalPath}/${sort} \
+        -V ${finalPath}/${filterPass} \
         --ref-version hg38 \
         --remove-filtered-variants \
         --data-sources-path ${funco} \
