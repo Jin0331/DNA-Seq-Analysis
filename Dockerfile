@@ -5,10 +5,11 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
 
 USER root
+WORKDIR /root
 
 # Install Dependencies of Miniconda
 RUN apt-get update --fix-missing && \
-    apt-get install -y wget bzip2 curl git build-essential libdbi-perl && \
+    apt-get install -y wget bzip2 curl git build-essential libdbi-perl nano && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -27,8 +28,13 @@ RUN conda update -y conda && \
     conda config --add channels bioconda && \
     conda config --add channels conda-forge
 
-# vep cached
-WORKDIR /root
+# ENV install
+COPY env_install.sh /root/env_install.sh
+RUN bash env_install.sh
 
+# vcf2maf install
+RUN wget https://github.com/mskcc/vcf2maf/archive/refs/tags/v1.6.21.zip && \
+    unzip v1.6.21.zip && \
+    rm -rf v1.6.21.zip 
 
 CMD [ "/bin/bash" ]
