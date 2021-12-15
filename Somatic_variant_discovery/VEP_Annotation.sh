@@ -23,7 +23,7 @@ do
     filename=$(basename $mapFile .mt2_filtered_sort_pass.vcf)
     output=${filename}.vep.maf
 
-    perl vcf2maf-1.6.21/vcf2maf.pl \
+    perl /root/vcf2maf-1.6.21/vcf2maf.pl \
         --input-vcf ${mapFile} \
 		--output-maf ${finalPath}/${output} \
         --tumor-id ${filename} \
