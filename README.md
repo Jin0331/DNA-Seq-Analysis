@@ -1,8 +1,9 @@
 # DNA-Seq-Analysis
-DNA-Seq-Analysis
 
+## **ExomeSeq Short Variant Discovery Pipeline (Germline / Somatic)**
 
 ```
-docker run -dit -v ${PWD}:/gatk/work --name gatk broadinstitute/gatk:4.1.8.1 /bin/bash
-
+# sempre813/bioconda:1.1 Container 
+docker run -dit -v ${PWD}:/root/work --name bioconda --user root sempre813/bioconda:1.1 bash
+docker exec -it bioconda bash
 ```
