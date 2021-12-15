@@ -15,7 +15,10 @@ do
         o) workVCF=${OPTARG};;
     esac
 done
-    
+
+source /opt/conda/etc/profile.d/conda.sh
+conda activate gatk4
+
 mkdir -p ${workVCF}
 
 ## Run MuTect2 using only tumor sample on chromosome level (25 commands with different intervals)    

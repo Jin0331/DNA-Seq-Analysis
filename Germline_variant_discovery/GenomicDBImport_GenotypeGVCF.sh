@@ -16,6 +16,9 @@ do
     esac
 done
 
+source /opt/conda/etc/profile.d/conda.sh
+conda activate gatk4
+
 # sample map make
 for i in ${gvcfPath}/*.g.vcf
 do 
@@ -36,7 +39,7 @@ done
 wait
 
 # GenotypeGVCFs
-cd /gatk/work
+cd /root/work
 mkdir -p ${finalPath}
 for i in `seq -f %04g 0 14`
 do

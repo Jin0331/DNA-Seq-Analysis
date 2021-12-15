@@ -17,6 +17,9 @@ do
     esac
 done
 
+source /opt/conda/etc/profile.d/conda.sh
+conda activate gatk4
+
 # directory
 mkdir -p ${workvqsr}
 mkdir -p ${finalPath}

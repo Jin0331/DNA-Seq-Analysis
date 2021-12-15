@@ -9,6 +9,9 @@ do
     esac
 done
 
+source /opt/conda/etc/profile.d/conda.sh
+conda activate gatk4
+
 # ScatterIntervalsByNs [Picard type]
 gatk ScatterIntervalsByNs -R ${ref} -OT ACGT -O temp.interval_list
 

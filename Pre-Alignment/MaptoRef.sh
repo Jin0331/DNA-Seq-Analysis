@@ -2,8 +2,6 @@
 
 START=$(date +%s)
 
-# docker run -dit -v ${PWD}:/data --name samtool staphb/samtools:1.11 bash
-# apt update && apt install bwa
 
 while getopts f:w:r: flag
 do
@@ -13,6 +11,9 @@ do
         r) ref=${OPTARG};;
     esac
 done
+
+source /opt/conda/etc/profile.d/conda.sh
+conda activate samtools
 
 mkdir -p ${workPath}
 
