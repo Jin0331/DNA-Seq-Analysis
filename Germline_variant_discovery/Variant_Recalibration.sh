@@ -23,6 +23,7 @@ conda activate gatk4
 # directory
 mkdir -p ${workvqsr}
 mkdir -p ${finalPath}
+chmod 777 -R ${finalPath}
 
 # Variant quality score recalibration - SNPs
 gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" VariantRecalibrator \

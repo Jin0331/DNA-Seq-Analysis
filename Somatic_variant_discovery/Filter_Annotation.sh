@@ -21,6 +21,7 @@ conda activate gatk4
 
 mkdir -p ${workvariant}
 mkdir -p ${finalPath}
+chmod 777 -R ${finalPath}
 
 # Filter variant calls from MuTect
 for mapFile in ${vcfFolder}/*.mt2_merged_sort.vcf

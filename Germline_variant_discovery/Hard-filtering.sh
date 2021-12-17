@@ -19,6 +19,8 @@ conda activate gatk4
 mkdir -p ${finalPath}
 mkdir -p ${workhard}
 
+chmod 777 -R ${finalPath}
+
 # SPLIT SNP
 gatk --java-options '-Xmx25g' SelectVariants \
  -R ${ref} \
