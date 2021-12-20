@@ -19,7 +19,7 @@ done
 source /opt/conda/etc/profile.d/conda.sh
 conda activate gatk4
 
-# sample map make
+# sample map make using bcftools
 for i in ${gvcfPath}/*.g.vcf
 do 
    echo `bcftools query -l $i`;echo $i
@@ -34,7 +34,7 @@ do
             --genomicsdb-workspace-path ${genomicPath}/${i} \
             --sample-name-map ${gvcfPath}/sample.map \
             -L ${interval}/${i}-scattered.interval_list \
-            --tmp-dir "/gatk/temp" &
+            --tmp-dir "/root" &
 done
 wait
 
