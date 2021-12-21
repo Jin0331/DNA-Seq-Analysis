@@ -2,12 +2,13 @@
 
 START=$(date +%s)
 
-while getopts v:r:o: flag
+while getopts v:r:o:f: flag
 do
     case "${flag}" in
         v) vcfPath=${OPTARG};;
         r) ref=${OPTARG};;
         o) finalPath=${OPTARG};;
+        f) fileName=${OPTARG};;
     esac
 done
 
@@ -20,9 +21,9 @@ mkdir -p ${finalPath}
 perl /root/annovar/table_annovar.pl ${vcfPath} \
     /root/annovar/humandb/ \
     -buildver ${ref} \
-    -out ${finalPath}/annovarAnnotation \
+    -out ${finalPath}/${fileName} \
     -remove \
-    -protocol ensGene,avsnp150,clinvar_20210501 -operation g,f,f \
+    -protocol ensGene,avsnp150,clinvar_20210501,icgc28 -operation g,f,f,f \
     -nastring . \
     -vcfinput -polish \
     --thread 15
