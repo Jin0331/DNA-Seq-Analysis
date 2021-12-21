@@ -37,4 +37,19 @@ RUN wget https://github.com/mskcc/vcf2maf/archive/refs/tags/v1.6.21.zip && \
     unzip v1.6.21.zip && \
     rm -rf v1.6.21.zip 
 
+# ANNOVAR install
+COPY annovar.latest.tar.gz /root/annovar.latest.tar.gz
+RUN tar -xzvf annovar.latest.tar.gz && \
+    perl annovar/annotate_variation.pl -buildver hg19 -downdb -webfrom annovar refGene annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg38 -downdb -webfrom annovar refGene annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg19 -downdb -webfrom annovar ensGene annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg38 -downdb -webfrom annovar ensGene annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg19 -downdb -webfrom annovar icgc28 annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg38 -downdb -webfrom annovar icgc28 annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg19 -downdb -webfrom annovar avsnp150 annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg38 -downdb -webfrom annovar avsnp150 annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg19 -downdb -webfrom annovar clinvar_20210501 annovar/humandb/ && \
+    perl annovar/annotate_variation.pl -buildver hg38 -downdb -webfrom annovar clinvar_20210501 annovar/humandb/ && \
+    rm -rf annovar.latest.tar.gz
+
 CMD [ "/bin/bash" ]
