@@ -39,7 +39,6 @@ done
 wait
 
 # GenotypeGVCFs
-cd /root/work
 mkdir -p ${finalPath}
 for i in `seq -f %04g 0 14`
 do
