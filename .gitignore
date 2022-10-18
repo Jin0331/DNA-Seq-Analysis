@@ -1,1 +1,5 @@
 annovar.latest.tar.gz
+*.fastq
+*.fq
+*.sam
+*.bam
