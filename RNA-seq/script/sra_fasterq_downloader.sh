@@ -17,4 +17,5 @@ while IFS= read -r line || [ -n "$line" ]; do
 done < $input
 
 # # file rename
+sudo chmod 777 ${basedir}/${foldername}
 python ${basedir}/script/ena_file_rename.py ${basedir}/${foldername}
