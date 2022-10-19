@@ -19,3 +19,4 @@ done < $input
 # # file rename
 sudo chmod 777 ${basedir}/${foldername}
 python ${basedir}/script/ena_file_rename.py ${basedir}/${foldername}
+gzip ${basedir}/${foldername}/*
