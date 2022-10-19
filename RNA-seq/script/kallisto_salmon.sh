@@ -45,7 +45,7 @@ docker exec -it ${containername}_trim_galore /bin/sh -c "mkdir -p /data/Paired_o
 # trim_galore CMD
 if [ ${type} = "fastq" ];then
     echo "Trim Galore RUN!!!!!!!!"
-    docker exec ${containername}_trim_galore /bin/sh -c "/data/RNA_script/pipe_script/trim_galore_pipe.sh -i /data/${indir} -o /data/Paired_output_dir"
+    docker exec ${containername}_trim_galore /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/trim_galore_pipe.sh -i /data/${indir} -o /data/Paired_output_dir"
 fi
 
 ## RUN pipeline
@@ -54,20 +54,20 @@ if [ ${run} = "a" ];then
     if [ ${qc_indir} = "n" ];then
         # STAR CMD
         echo "Salmon RUN!!!!!!!!"
-        docker exec ${containername}_salmon /bin/sh -c "/data/RNA_script/pipe_script/salmon_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_salmon /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/salmon_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
 
         # kallisto CMD
         echo "Kallisto RUN!!!!!!!!"
-        docker exec ${containername}_kallisto /bin/sh -c "/data/RNA_script/pipe_script/kallisto_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_kallisto /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/kallisto_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
     
     else
         # STAR CMD
         echo "Salmon RUN!!!!!!!!"
-        docker exec ${containername}_salmon /bin/sh -c "/data/RNA_script/pipe_script/salmon_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_salmon /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/salmon_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
 
         # kallisto CMD
         echo "Kallisto RUN!!!!!!!!"
-        docker exec ${containername}_kallisto /bin/sh -c "/data/RNA_script/pipe_script/kallisto_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_kallisto /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/kallisto_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
     fi
 
 
@@ -76,12 +76,12 @@ elif [ ${run} = "k" ];then
     if [ ${qc_indir} = "n" ];then
         # kallisto CMD
         echo "Kallisto RUN!!!!!!!!"
-        docker exec ${containername}_kallisto /bin/sh -c "/data/RNA_script/pipe_script/kallisto_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_kallisto /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/kallisto_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
     
     else
         # kallisto CMD
         echo "Kallisto RUN!!!!!!!!"
-        docker exec ${containername}_kallisto /bin/sh -c "/data/RNA_script/pipe_script/kallisto_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_kallisto /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/kallisto_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/KALLISTO -x /data/index/kallisto_index/${index}.idx -t ${thread} -g ${type}"
     fi
 
 elif [ ${run} = "s" ];then
@@ -89,11 +89,11 @@ elif [ ${run} = "s" ];then
     if [ ${qc_indir} = "n" ];then
         # STAR CMD
         echo "Salmon RUN!!!!!!!!"
-        docker exec ${containername}_salmon /bin/sh -c "/data/RNA_script/pipe_script/salmon_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_salmon /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/salmon_pipe.sh -i /data/${indir} -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
     else
         # STAR CMD
         echo "Salmon RUN!!!!!!!!"
-        docker exec ${containername}_salmon /bin/sh -c "/data/RNA_script/pipe_script/salmon_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
+        docker exec ${containername}_salmon /bin/sh -c "/data/NGS-Analysis/RNA-seq/pipe_script/salmon_pipe.sh -i /data/Paired_output_dir/QC -o /data/Paired_output_dir/SALMON -x /data/index/salmon_index/${index}.idx -t ${thread} -g ${type}"
     fi
 
 else
