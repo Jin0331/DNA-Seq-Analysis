@@ -63,7 +63,7 @@ gatk --java-options "-Xms4G -Xmx4G -XX:ParallelGCThreads=5" VariantRecalibrator 
   -tranche 92.0 -tranche 91.0 -tranche 90.0 \
   --tranches-file ${workvqsr}/recalibrate_INDEL.tranches \
   --resource:mills,known=false,training=true,truth=true,prior=12.0 ${mills} \
-  --resource:axiomPoly,known=false,training=true,truth=false,prior=10 ${axiom} \
+  # --resource:axiomPoly,known=false,training=true,truth=false,prior=10 ${axiom} \
   --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ${dbsnp} \
   --rscript-file ${workvqsr}/output_indel1.plots.R
 
